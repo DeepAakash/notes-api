@@ -4,10 +4,13 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 export class NoteEntity{
     @PrimaryGeneratedColumn()
     id: number;
+
     @Column()
     title: string;
+
     @Column()
     desc: string;
+    
     @Column()
     status: NoteStatus;
 }
