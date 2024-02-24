@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { UserEntity } from "./user.entity";
 
 @Entity('notes')
 export class NoteEntity{
@@ -13,6 +14,12 @@ export class NoteEntity{
     
     @Column()
     status: NoteStatus;
+
+    @ManyToOne(() => UserEntity, (user) => user.notes)
+    user: UserEntity
+
+    @Column()
+    userId: number;
 }
 
 export enum NoteStatus{
