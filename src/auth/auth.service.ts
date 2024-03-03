@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterUserDto } from 'src/DTO/register-user.dto';
 import { UserEntity } from 'src/Entity/user.entity';
@@ -21,15 +21,21 @@ export class AuthService {
         // console.log(hashed);
         // console.log(salt);
 
-        const user:UserEntity = new UserEntity()
-        user.username=username;
-        user.password=hashed;
-        user.salt=salt;
-        this.repo.create(user);
-        try{
-            return await this.repo.save(user)
-        } catch(err){
-            throw new InternalServerErrorException('Oops! Something went wrong! User not created.');
+        const foundUser=await this.repo.findOneBy({username:username});
+
+        if(foundUser){
+            throw new BadRequestException();
+        }else{
+            const user:UserEntity = new UserEntity()
+            user.username=username;
+            user.password=hashed;
+            user.salt=salt;
+            this.repo.create(user);
+            try{
+                return await this.repo.save(user)
+            } catch(err){
+                throw new InternalServerErrorException('Oops! Something went wrong! User not created.');
+            }
         }
     }
 
